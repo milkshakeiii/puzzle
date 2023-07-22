@@ -3,47 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Elements
-{
-    Fire,
-    Water,
-    Earth,
-    Steam,
-    Lava,
-    Mud,
-    Cloud,
-    Rain,
-    Life,
-    Plant,
-    Phoenix
-}
-
 public class Puzzle
 {
-    public static Dictionary<Tuple<Elements, Elements>, Elements> combinations = new()
-    {
-        { new Tuple<Elements, Elements>(Elements.Fire, Elements.Water), Elements.Steam },
-        { new Tuple<Elements, Elements>(Elements.Water, Elements.Fire), Elements.Steam },
-        { new Tuple<Elements, Elements>(Elements.Fire, Elements.Earth), Elements.Lava },
-        { new Tuple<Elements, Elements>(Elements.Earth, Elements.Fire), Elements.Lava },
-        { new Tuple<Elements, Elements>(Elements.Water, Elements.Earth), Elements.Mud },
-        { new Tuple<Elements, Elements>(Elements.Earth, Elements.Water), Elements.Mud },
-        { new Tuple<Elements, Elements>(Elements.Water, Elements.Steam), Elements.Cloud },
-        { new Tuple<Elements, Elements>(Elements.Steam, Elements.Water), Elements.Cloud },
-        { new Tuple<Elements, Elements>(Elements.Earth, Elements.Cloud), Elements.Rain },
-        { new Tuple<Elements, Elements>(Elements.Cloud, Elements.Earth), Elements.Rain },
-        { new Tuple<Elements, Elements>(Elements.Rain, Elements.Lava), Elements.Life },
-        { new Tuple<Elements, Elements>(Elements.Lava, Elements.Rain), Elements.Life },
-        { new Tuple<Elements, Elements>(Elements.Mud, Elements.Life), Elements.Plant },
-        { new Tuple<Elements, Elements>(Elements.Life, Elements.Mud), Elements.Plant },
-        { new Tuple<Elements, Elements>(Elements.Plant, Elements.Fire), Elements.Phoenix },
-        { new Tuple<Elements, Elements>(Elements.Fire, Elements.Plant), Elements.Phoenix },
-    };
-
     public int height;
     public int width;
 
-    public Dictionary<Vector2Int, Elements> squares = new(); // a map of squares on the board to the element they contain
+    public Dictionary<Vector2Int, int> squares = new(); // a map of squares on the board to the element they contain
     public int stepsTaken = 0; // number of squares elements have moved so far
     public int optimalSolutionSteps = -1; // the optimal number of steps to solve the puzzle
 
@@ -53,7 +18,7 @@ public class Puzzle
         this.height = height;
     }
 
-    public void AddElement(Vector2Int square, Elements element)
+    public void AddElement(Vector2Int square, int element)
     {
         if (squares.ContainsKey(square))
         {
@@ -91,13 +56,13 @@ public class Puzzle
         if (squares.ContainsKey(fromSquare) && squares.ContainsKey(toSquare))
         {
             // combine elements
-            Tuple<Elements, Elements> tuple = new(squares[fromSquare], squares[toSquare]);
-            if  (!combinations.ContainsKey(tuple))
+            Tuple<int, int> tuple = new(squares[fromSquare], squares[toSquare]);
+            if  (!PuzzleSetup.instance.GetCombinations().ContainsKey(tuple))
             {
                 return false;
             }
             stepsTaken += Math.Abs(fromSquare.x - toSquare.x) + Math.Abs(fromSquare.y - toSquare.y);
-            Elements newElement = combinations[tuple];
+            int newElement = PuzzleSetup.instance.GetCombinations()[tuple];
             squares.Remove(fromSquare);
             squares.Remove(toSquare);
             squares.Add(toSquare, newElement);
@@ -108,13 +73,13 @@ public class Puzzle
 
     public bool IsSolved()
     {
-        return squares.ContainsValue(Elements.Phoenix);
+        return PuzzleSetup.instance.IsSolved(this);
     }
 
     public Puzzle Copy()
     {
         Puzzle copy = new(width, height);
-        foreach (KeyValuePair<Vector2Int, Elements> pair in squares)
+        foreach (KeyValuePair<Vector2Int, int> pair in squares)
         {
             copy.AddElement(pair.Key, pair.Value);
         }
@@ -130,7 +95,7 @@ public class Puzzle
             {
                 return false;
             }
-            foreach (KeyValuePair<Vector2Int, Elements> pair in squares)
+            foreach (KeyValuePair<Vector2Int, int> pair in squares)
             {
                 if (!other.squares.ContainsKey(pair.Key) || other.squares[pair.Key] != pair.Value)
                 {

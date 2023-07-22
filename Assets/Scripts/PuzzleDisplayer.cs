@@ -32,19 +32,7 @@ public class PuzzleDisplayer : MonoBehaviour
         optimalSolutionText.text = "Optimal solution: computing...";
 
         //make a 6x6 puzzle and add elements to it
-        activePuzzle = new Puzzle(6, 6);
-        activePuzzle.AddElement(new Vector2Int(0, 0), Elements.Fire);
-        activePuzzle.AddElement(new Vector2Int(1, 0), Elements.Water);
-        activePuzzle.AddElement(new Vector2Int(2, 0), Elements.Earth);
-        activePuzzle.AddElement(new Vector2Int(0, 1), Elements.Fire);
-        activePuzzle.AddElement(new Vector2Int(1, 1), Elements.Water);
-        activePuzzle.AddElement(new Vector2Int(2, 1), Elements.Earth);
-        activePuzzle.AddElement(new Vector2Int(0, 3), Elements.Fire);
-        activePuzzle.AddElement(new Vector2Int(1, 3), Elements.Water);
-        activePuzzle.AddElement(new Vector2Int(2, 3), Elements.Earth);
-        activePuzzle.AddElement(new Vector2Int(0, 5), Elements.Fire);
-        activePuzzle.AddElement(new Vector2Int(1, 5), Elements.Water);
-        activePuzzle.AddElement(new Vector2Int(2, 5), Elements.Earth);
+        activePuzzle = PuzzleSetup.instance.GetStartingPuzzle();
         startingState = activePuzzle.Copy();
 
         DisplayPuzzle();
