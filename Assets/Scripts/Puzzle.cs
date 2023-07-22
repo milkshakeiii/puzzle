@@ -37,7 +37,7 @@ public class Puzzle
         return square.x < 0 || square.x >= width || square.y < 0 || square.y >= height;
     }
 
-    public bool MakeMove(Vector2Int fromSquare, Vector2Int toSquare)
+    private bool MoveResult(Vector2Int fromSquare, Vector2Int toSquare)
     {
         if (!squares.ContainsKey(fromSquare))
         {
@@ -54,33 +54,35 @@ public class Puzzle
 
         if (squares.ContainsKey(fromSquare) && !squares.ContainsKey(toSquare))
         {
-            stepsTaken += Math.Abs(fromSquare.x - toSquare.x) + Math.Abs(fromSquare.y - toSquare.y);
-            
             squares.Add(toSquare, squares[fromSquare]);
             squares.Remove(fromSquare);
-
-            PuzzleSetup.instance.SpecialMoveEffets(this, fromSquare, toSquare);
         }
         else if (squares.ContainsKey(fromSquare) && squares.ContainsKey(toSquare))
         {
             // combine elements
             Tuple<int, int> tuple = new(squares[fromSquare], squares[toSquare]);
-            if  (!PuzzleSetup.instance.GetCombinations().ContainsKey(tuple))
+            if (!PuzzleSetup.instance.GetCombinations().ContainsKey(tuple))
             {
-                return false;
+                return false; // non-combination
             }
-            stepsTaken += Math.Abs(fromSquare.x - toSquare.x) + Math.Abs(fromSquare.y - toSquare.y);
-            
+
             int newElement = PuzzleSetup.instance.GetCombinations()[tuple];
             squares.Remove(fromSquare);
             squares.Remove(toSquare);
             squares.Add(toSquare, newElement);
-
-            PuzzleSetup.instance.SpecialMoveEffets(this, fromSquare, toSquare);
-
-            return true;
         }
-        return false;
+        return true;
+    }
+
+    public bool MakeMove(Vector2Int fromSquare, Vector2Int toSquare)
+    {
+        bool result = MoveResult(fromSquare, toSquare);
+        if (result)
+        {
+            stepsTaken += Math.Abs(fromSquare.x - toSquare.x) + Math.Abs(fromSquare.y - toSquare.y);
+            PuzzleSetup.instance.SpecialMoveEffets(this, fromSquare, toSquare);
+        }
+        return result;
     }
 
     public bool IsSolved()
