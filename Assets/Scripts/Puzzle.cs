@@ -32,28 +32,36 @@ public class Puzzle
         squares.Add(square, element);
     }
 
+    public bool OutOfBounds(Vector2Int square)
+    {
+        return square.x < 0 || square.x >= width || square.y < 0 || square.y >= height;
+    }
+
     public bool MakeMove(Vector2Int fromSquare, Vector2Int toSquare)
     {
         if (!squares.ContainsKey(fromSquare))
         {
             return false;
         }
-        if (toSquare.x < 0 || toSquare.x >= width || toSquare.y < 0 || toSquare.y >= height)
+        if (OutOfBounds(toSquare))
         {
             return false;
         }
-        if (fromSquare.x < 0 || fromSquare.x >= width || fromSquare.y < 0 || fromSquare.y >= height)
+        if (OutOfBounds(fromSquare))
         {
             return false;
         }
 
-        //if (squares.ContainsKey(fromSquare) && !squares.ContainsKey(toSquare))
-        //{
-        //    squares.Add(toSquare, squares[fromSquare]);
-        //    squares.Remove(fromSquare);
-        //}
-        //else
-        if (squares.ContainsKey(fromSquare) && squares.ContainsKey(toSquare))
+        if (squares.ContainsKey(fromSquare) && !squares.ContainsKey(toSquare))
+        {
+            stepsTaken += Math.Abs(fromSquare.x - toSquare.x) + Math.Abs(fromSquare.y - toSquare.y);
+            
+            squares.Add(toSquare, squares[fromSquare]);
+            squares.Remove(fromSquare);
+
+            PuzzleSetup.instance.SpecialMoveEffets(this, fromSquare, toSquare);
+        }
+        else if (squares.ContainsKey(fromSquare) && squares.ContainsKey(toSquare))
         {
             // combine elements
             Tuple<int, int> tuple = new(squares[fromSquare], squares[toSquare]);
@@ -62,10 +70,14 @@ public class Puzzle
                 return false;
             }
             stepsTaken += Math.Abs(fromSquare.x - toSquare.x) + Math.Abs(fromSquare.y - toSquare.y);
+            
             int newElement = PuzzleSetup.instance.GetCombinations()[tuple];
             squares.Remove(fromSquare);
             squares.Remove(toSquare);
             squares.Add(toSquare, newElement);
+
+            PuzzleSetup.instance.SpecialMoveEffets(this, fromSquare, toSquare);
+
             return true;
         }
         return false;

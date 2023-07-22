@@ -26,4 +26,9 @@ public abstract class PuzzleSetup : MonoBehaviour
     public abstract Dictionary<int, Sprite> GetSprites();
 
     public abstract bool IsSolved(Puzzle puzzle);
+
+    public virtual void SpecialMoveEffets(Puzzle puzzle, Vector2Int fromSquare, Vector2Int toSquare)
+    {
+        return;
+    }
 }
