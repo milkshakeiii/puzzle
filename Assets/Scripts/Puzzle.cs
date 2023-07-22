@@ -45,6 +45,7 @@ public class Puzzle
 
     public Dictionary<Vector2Int, Elements> squares = new(); // a map of squares on the board to the element they contain
     public int stepsTaken = 0; // number of squares elements have moved so far
+    public int optimalSolutionSteps = -1; // the optimal number of steps to solve the puzzle
 
     public Puzzle(int width, int height)
     {
@@ -70,15 +71,15 @@ public class Puzzle
     {
         if (!squares.ContainsKey(fromSquare))
         {
-            throw new ArgumentException("fromSquare does not contain an element");
+            return false;
         }
         if (toSquare.x < 0 || toSquare.x >= width || toSquare.y < 0 || toSquare.y >= height)
         {
-            throw new ArgumentException("toSquare is out of bounds");
+            return false;
         }
         if (fromSquare.x < 0 || fromSquare.x >= width || fromSquare.y < 0 || fromSquare.y >= height)
         {
-            throw new ArgumentException("fromSquare is out of bounds");
+            return false;
         }
 
         //if (squares.ContainsKey(fromSquare) && !squares.ContainsKey(toSquare))

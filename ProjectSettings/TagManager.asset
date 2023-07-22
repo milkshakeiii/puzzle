@@ -47,3 +47,6 @@ TagManager:
   - name: Links
     uniqueID: 2842443483
     locked: 0
+  - name: Selection
+    uniqueID: 2443029053
+    locked: 0
