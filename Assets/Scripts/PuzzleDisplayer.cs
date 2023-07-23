@@ -25,6 +25,7 @@ public class PuzzleDisplayer : MonoBehaviour
     private Square firstSquareOfMoveClicked = null; // the first square clicked in a move, or null if no square has been clicked yet
 
     public delegate void OptimalSolutionCallback(int optimalSolution);
+    private System.Threading.Tasks.Task<int> optimalSolutionTask = null;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +40,14 @@ public class PuzzleDisplayer : MonoBehaviour
         LaunchOptimalSolutionComputation(activePuzzle.Copy());
     }
 
+    private void OnDestroy()
+    {
+        if (optimalSolutionTask != null)
+        {
+            optimalSolutionTask.Dispose();
+        }
+    }
+
     public void RestartCurrentPuzzle()
     {
         activePuzzle = startingState.Copy();
@@ -48,17 +57,14 @@ public class PuzzleDisplayer : MonoBehaviour
 
     private void LaunchOptimalSolutionComputation(Puzzle puzzle)
     {
-        // launch the computation of the optimal solution in a separate thread
-        // when the computation is done, call SetOptimalSolution
-        OptimalSolutionCallback callback = SetOptimalSolution;
         // Launch the thread using Task.Run, passing puzzle and the callback.
-        System.Threading.Tasks.Task.Run(() => ComputeOptimalSolution(puzzle, callback));
+        optimalSolutionTask = System.Threading.Tasks.Task.Run(() => ComputeOptimalSolution(puzzle));
     }
 
-    private static void ComputeOptimalSolution(Puzzle puzzle, OptimalSolutionCallback callback)
+    private static int ComputeOptimalSolution(Puzzle puzzle)
     {
         int optimalSolution = PuzzleSolver.OptimalSolutionLength(puzzle);
-        callback(optimalSolution);
+        return optimalSolution;
     }
 
     public void SetOptimalSolution(int optimalSolution)
@@ -98,8 +104,12 @@ public class PuzzleDisplayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //ClearPuzzle();
-        //DisplayPuzzle();
+        if (optimalSolutionTask != null && optimalSolutionTask.IsCompleted)
+        {
+            SetOptimalSolution(optimalSolutionTask.Result);
+            optimalSolutionTask.Dispose();
+            optimalSolutionTask = null;
+        }
     }
 
     public void UpdateSelectionDisplay()
