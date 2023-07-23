@@ -26,6 +26,28 @@ public class ElementalSetup1 : PuzzleSetup
         { new Tuple < int, int >((int) Elements1.Fire,(int) Elements1.Plant) , (int) Elements1.Phoenix },
     };
 
+    private static Dictionary<int, int> elementsToTiers = new()
+    {
+        { (int)Elements1.Steam, 5 },
+        { (int)Elements1.Lava, 5 },
+        { (int)Elements1.Mud, 5 },
+        { (int)Elements1.Cloud, 4 },
+        { (int)Elements1.Rain, 3 },
+        { (int)Elements1.Life, 2 },
+        { (int)Elements1.Plant, 1 },
+        { (int)Elements1.Phoenix, 0 }
+    };
+
+    public override int Heuristic(Puzzle puzzle)
+    {
+        int bestTier = 6;
+        foreach (int element in puzzle.squares.Values)
+        {
+            bestTier = Math.Min(bestTier, elementsToTiers.GetValueOrDefault(element, 6));
+        }
+        return bestTier;
+    }
+
     public override Dictionary<Tuple<int, int>, int> GetCombinations()
     {
         return elementalCombinations1;

@@ -45,6 +45,41 @@ public class SpaceSetup1 : PuzzleSetup
         Eons
     }
 
+    private Dictionary<int, int> track1Tiers = new()
+    {
+        {(int)SpaceElements.SolarSystem, 0 },
+        {(int)SpaceElements.Planet, 1 },
+        {(int)SpaceElements.Protoplanet, 2 },
+    };
+
+    private Dictionary<int, int> track2Tiers = new()
+    {
+        {(int)SpaceElements.BlackHole, 0 },
+        {(int)SpaceElements.Supernova, 1 },
+        {(int)SpaceElements.Star, 2 },
+    };
+
+    public override int Heuristic(Puzzle puzzle)
+    {
+        int bestTier1 = 3;
+        int bestTier2 = 3;
+        bool hasGalaxy = false;
+        foreach (int element in puzzle.squares.Values)
+        {
+            bestTier1 = Math.Min(bestTier1, track1Tiers.GetValueOrDefault(element, 3));
+            bestTier2 = Math.Min(bestTier2, track2Tiers.GetValueOrDefault(element, 3));
+            hasGalaxy = hasGalaxy || element == (int)SpaceElements.Galaxy;
+        }
+        if (hasGalaxy)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1 + bestTier1 + bestTier2;
+        }
+    }
+
     public override Puzzle GetStartingPuzzle()
     {
         Puzzle activePuzzle = new Puzzle(6, 6);

@@ -35,4 +35,9 @@ public abstract class PuzzleSetup : MonoBehaviour
     {
         return;
     }
+
+    public virtual int Heuristic(Puzzle puzzle)
+    {
+        return 0;
+    }
 }

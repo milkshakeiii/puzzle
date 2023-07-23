@@ -39,23 +39,24 @@ public class Puzzle
         return square.x < 0 || square.x >= width || square.y < 0 || square.y >= height;
     }
 
-    private bool MoveResult(Vector2Int fromSquare, Vector2Int toSquare)
+    private int MoveResult(Vector2Int fromSquare, Vector2Int toSquare)
     {
         if (!squares.ContainsKey(fromSquare))
         {
-            return false;
+            return 0;
         }
         if (OutOfBounds(toSquare))
         {
-            return false;
+            return 0;
         }
         if (OutOfBounds(fromSquare))
         {
-            return false;
+            return 0;
         }
-        if (pathfinder.GetSteps(this, fromSquare, toSquare).Count == 0)
+        int stepCount = pathfinder.GetSteps(this, fromSquare, toSquare).Count;
+        if (stepCount == 0)
         {
-            return false;
+            return 0;
         }
 
         if (squares.ContainsKey(fromSquare) && !squares.ContainsKey(toSquare))
@@ -69,7 +70,7 @@ public class Puzzle
             Tuple<int, int> tuple = new(squares[fromSquare], squares[toSquare]);
             if (!PuzzleSetup.instance.GetCombinations().ContainsKey(tuple))
             {
-                return false; // non-combination
+                return 0; // non-combination
             }
 
             int newElement = PuzzleSetup.instance.GetCombinations()[tuple];
@@ -77,18 +78,18 @@ public class Puzzle
             squares.Remove(toSquare);
             squares.Add(toSquare, newElement);
         }
-        return true;
+        return stepCount;
     }
 
     public bool MakeMove(Vector2Int fromSquare, Vector2Int toSquare)
     {
-        bool result = MoveResult(fromSquare, toSquare);
-        if (result)
+        int result = MoveResult(fromSquare, toSquare);
+        if (result != 0)
         {
-            stepsTaken += Math.Abs(fromSquare.x - toSquare.x) + Math.Abs(fromSquare.y - toSquare.y);
+            stepsTaken += result;
             PuzzleSetup.instance.SpecialMoveEffets(this, fromSquare, toSquare);
         }
-        return result;
+        return result != 0;
     }
 
     public bool IsSolved()
@@ -143,7 +144,7 @@ public class PuzzleSolver
 {
     public static int OptimalSolutionLength(Puzzle puzzle, System.Threading.CancellationToken cancellationToken)
     {
-        // use BFS to find the shortest path to the solution (if one exists)
+        // use A* to find the shortest path to the solution (if one exists)
         Utils.PriorityQueue<Puzzle, int> frontier = new();
         frontier.Enqueue(puzzle.Copy(), 0);
         HashSet<Puzzle> visited = new();
@@ -167,7 +168,7 @@ public class PuzzleSolver
                     Puzzle copy = current.Copy();
                     if (copy.MakeMove(sourceSquare, targetSquare) && !visited.Contains(copy))
                     {
-                        frontier.Enqueue(copy, copy.stepsTaken);
+                        frontier.Enqueue(copy, copy.stepsTaken + PuzzleSetup.instance.Heuristic(puzzle));
                         visited.Add(copy);
                     }
                 }
