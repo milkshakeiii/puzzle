@@ -833,7 +833,7 @@ GameObject:
   - component: {fileID: 521641110}
   - component: {fileID: 521641109}
   - component: {fileID: 521641108}
-  - component: {fileID: 521641107}
+  - component: {fileID: 521641111}
   m_Layer: 5
   m_Name: Level Selection Button
   m_TagString: Untagged
@@ -862,19 +862,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.0268, y: 0.0358}
   m_SizeDelta: {x: 4.0179, y: 1.1429}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &521641107
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 521641105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c62cb0adaa9206b4ca2a0bc452d3d4f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dontDestroyOnLoad: 0
 --- !u!114 &521641108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -919,8 +906,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 521641107}
-        m_TargetAssemblyTypeName: LevelSelector, Assembly-CSharp
+      - m_Target: {fileID: 521641111}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
         m_MethodName: LoadScene
         m_Mode: 5
         m_Arguments:
@@ -969,6 +956,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 521641105}
   m_CullTransparentMesh: 1
+--- !u!114 &521641111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521641105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f0b09cede2907144820350c16117c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &531804961
 GameObject:
   m_ObjectHideFlags: 0

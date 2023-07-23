@@ -10,7 +10,7 @@ public class ColorChangeForLevel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (elementalSetup3 && PuzzleSetup.instance is ElementalSetup3)
+        if (elementalSetup3 && (PuzzleSetup.instance is ElementalSetup3 || (PuzzleSetup.instance is ElementalSetup4 setup4 && setup4.hasLavaEffect)))
         {
             GetComponent<SpriteRenderer>().color = color;
         }

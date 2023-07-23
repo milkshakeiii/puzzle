@@ -5,13 +5,17 @@ using UnityEngine;
 
 public class LevelSelector : MonoBehaviour
 {
-    public bool dontDestroyOnLoad = true;
+    private static LevelSelector instance = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (dontDestroyOnLoad)
-            DontDestroyOnLoad(this);
+        if (instance != null)
+        {
+            Destroy(instance);
+        }
+        instance = this;
+        DontDestroyOnLoad(this);
     }
 
     public void EnableChild(int childNumber)
@@ -20,10 +24,5 @@ public class LevelSelector : MonoBehaviour
         {
             transform.GetChild(i).gameObject.SetActive(i == childNumber);
         }
-    }
-
-    public void LoadScene(string sceneName)
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
     }
 }
