@@ -36,7 +36,7 @@ public class PuzzleDisplayer : MonoBehaviour
         startingState = activePuzzle.Copy();
 
         DisplayPuzzle();
-        //LaunchOptimalSolutionComputation(activePuzzle.Copy());
+        LaunchOptimalSolutionComputation(activePuzzle.Copy());
     }
 
     public void RestartCurrentPuzzle()
@@ -85,8 +85,8 @@ public class PuzzleDisplayer : MonoBehaviour
         }
         else
         {
-            activePuzzle.MakeMove(firstSquareOfMoveClicked.boardPosition, square.boardPosition);
-            if (firstSquareOfMoveClicked.element != null)
+            bool goodMove = activePuzzle.MakeMove(firstSquareOfMoveClicked.boardPosition, square.boardPosition);
+            if (goodMove && firstSquareOfMoveClicked.element != null)
                 firstSquareOfMoveClicked.element.AnimateTo(square, activePuzzle);
             firstSquareOfMoveClicked = null;
             ClearPuzzle();
