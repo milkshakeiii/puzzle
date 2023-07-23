@@ -65,7 +65,7 @@ public class Pathfinder
                 {
                     continue;
                 }
-                if ((bitboard | (1L << (adjacentSquare.x + adjacentSquare.y * width))) == 0)
+                if ((bitboard & (1L << (adjacentSquare.x + adjacentSquare.y * width))) != 0)
                 {
                     continue;
                 }
