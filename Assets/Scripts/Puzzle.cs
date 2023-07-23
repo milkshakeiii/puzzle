@@ -141,7 +141,7 @@ public class Puzzle
 
 public class PuzzleSolver
 {
-    public static int OptimalSolutionLength(Puzzle puzzle)
+    public static int OptimalSolutionLength(Puzzle puzzle, System.Threading.CancellationToken cancellationToken)
     {
         // use BFS to find the shortest path to the solution (if one exists)
         Utils.PriorityQueue<Puzzle, int> frontier = new();
@@ -151,6 +151,8 @@ public class PuzzleSolver
         int iterations = 0;
         while (frontier.Count > 0)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             Puzzle current = frontier.Dequeue();
             puzzle.squares = current.squares;
             iterations++;

@@ -26,6 +26,7 @@ public class PuzzleDisplayer : MonoBehaviour
 
     public delegate void OptimalSolutionCallback(int optimalSolution);
     private System.Threading.Tasks.Task<int> optimalSolutionTask = null;
+    private System.Threading.CancellationTokenSource optimalSolutionCancellationTokenSource = null;
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +45,7 @@ public class PuzzleDisplayer : MonoBehaviour
     {
         if (optimalSolutionTask != null)
         {
-            optimalSolutionTask.Dispose();
+            optimalSolutionCancellationTokenSource.Cancel();
         }
     }
 
@@ -58,12 +59,14 @@ public class PuzzleDisplayer : MonoBehaviour
     private void LaunchOptimalSolutionComputation(Puzzle puzzle)
     {
         // Launch the thread using Task.Run, passing puzzle and the callback.
-        optimalSolutionTask = System.Threading.Tasks.Task.Run(() => ComputeOptimalSolution(puzzle));
+        optimalSolutionCancellationTokenSource = new System.Threading.CancellationTokenSource();
+        System.Threading.CancellationToken cancellationToken = optimalSolutionCancellationTokenSource.Token;
+        optimalSolutionTask = System.Threading.Tasks.Task.Run(() => ComputeOptimalSolution(puzzle, cancellationToken), cancellationToken);
     }
 
-    private static int ComputeOptimalSolution(Puzzle puzzle)
+    private static int ComputeOptimalSolution(Puzzle puzzle, System.Threading.CancellationToken cancellationToken)
     {
-        int optimalSolution = PuzzleSolver.OptimalSolutionLength(puzzle);
+        int optimalSolution = PuzzleSolver.OptimalSolutionLength(puzzle, cancellationToken);
         return optimalSolution;
     }
 
@@ -107,7 +110,6 @@ public class PuzzleDisplayer : MonoBehaviour
         if (optimalSolutionTask != null && optimalSolutionTask.IsCompleted)
         {
             SetOptimalSolution(optimalSolutionTask.Result);
-            optimalSolutionTask.Dispose();
             optimalSolutionTask = null;
         }
     }
