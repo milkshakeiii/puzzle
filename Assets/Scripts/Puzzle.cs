@@ -7,6 +7,7 @@ public class Puzzle
 {
     public int height;
     public int width;
+    public Pathfinder pathfinder;
 
     public Dictionary<Vector2Int, int> squares = new(); // a map of squares on the board to the element they contain
     public int stepsTaken = 0; // number of squares elements have moved so far
@@ -16,6 +17,7 @@ public class Puzzle
     {
         this.width = width;
         this.height = height;
+        pathfinder = new Pathfinder(width, height);
     }
 
     public void AddElement(Vector2Int square, int element)
@@ -48,6 +50,10 @@ public class Puzzle
             return false;
         }
         if (OutOfBounds(fromSquare))
+        {
+            return false;
+        }
+        if (pathfinder.GetSteps(this, fromSquare, toSquare).Count == 0)
         {
             return false;
         }
@@ -98,6 +104,7 @@ public class Puzzle
             copy.AddElement(pair.Key, pair.Value);
         }
         copy.stepsTaken = stepsTaken;
+        copy.pathfinder = pathfinder; // same object
         return copy;
     }
 

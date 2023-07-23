@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,9 +6,10 @@ using UnityEngine;
 public class Square : MonoBehaviour
 {
     public static event SquareClicked OnSquareClicked;
-    public delegate void SquareClicked(Vector2Int position);
+    public delegate void SquareClicked(Square square);
 
     public Vector2Int boardPosition;
+    public DisplayElement element;
 
     public void Initialize(Vector2Int position)
     {
@@ -28,6 +30,6 @@ public class Square : MonoBehaviour
 
     private void OnMouseUp()
     {
-        OnSquareClicked?.Invoke(boardPosition);
+        OnSquareClicked?.Invoke(this);
     }
 }

@@ -8,9 +8,13 @@ public abstract class PuzzleSetup : MonoBehaviour
 {
     public static PuzzleSetup instance;
 
-    private void Awake()
+    private void OnEnable()
     {
         instance = this;
+    }
+
+    private void Awake()
+    {
         ProtectedAwake();
     }
 

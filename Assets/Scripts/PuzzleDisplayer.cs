@@ -22,7 +22,7 @@ public class PuzzleDisplayer : MonoBehaviour
     private Puzzle startingState = null; 
     private Puzzle activePuzzle = null;
 
-    private Vector2Int firstSquareOfMoveClicked = new Vector2Int(-1, -1); // the first square clicked in a move, or (-1, -1) if no square has been clicked yet
+    private Square firstSquareOfMoveClicked = null; // the first square clicked in a move, or null if no square has been clicked yet
 
     public delegate void OptimalSolutionCallback(int optimalSolution);
 
@@ -36,7 +36,7 @@ public class PuzzleDisplayer : MonoBehaviour
         startingState = activePuzzle.Copy();
 
         DisplayPuzzle();
-        LaunchOptimalSolutionComputation(activePuzzle.Copy());
+        //LaunchOptimalSolutionComputation(activePuzzle.Copy());
     }
 
     public void RestartCurrentPuzzle()
@@ -77,19 +77,22 @@ public class PuzzleDisplayer : MonoBehaviour
         Square.OnSquareClicked -= SquareClicked;
     }
 
-    private void SquareClicked(Vector2Int position)
+    private void SquareClicked(Square square)
     {
-        if (firstSquareOfMoveClicked == new Vector2Int(-1, -1))
+        if (firstSquareOfMoveClicked == null)
         {
-            firstSquareOfMoveClicked = position;
+            firstSquareOfMoveClicked = square;
         }
         else
         {
-            activePuzzle.MakeMove(firstSquareOfMoveClicked, position);
-            firstSquareOfMoveClicked = new Vector2Int(-1, -1);
+            activePuzzle.MakeMove(firstSquareOfMoveClicked.boardPosition, square.boardPosition);
+            if (firstSquareOfMoveClicked.element != null)
+                firstSquareOfMoveClicked.element.AnimateTo(square, activePuzzle);
+            firstSquareOfMoveClicked = null;
+            ClearPuzzle();
+            DisplayPuzzle();
         }
-        ClearPuzzle();
-        DisplayPuzzle();
+        UpdateSelectionDisplay();
     }
 
     // Update is called once per frame
@@ -99,18 +102,23 @@ public class PuzzleDisplayer : MonoBehaviour
         //DisplayPuzzle();
     }
 
-    public void DisplayPuzzle()
+    public void UpdateSelectionDisplay()
     {
-        if (firstSquareOfMoveClicked == new Vector2Int(-1, -1))
+        if (firstSquareOfMoveClicked == null)
         {
             selectionDisplay.SetActive(false);
         }
         else
         {
             selectionDisplay.SetActive(true);
-            selectionDisplay.transform.localPosition = new Vector3(firstSquareOfMoveClicked.x * spacing + transform.position.x, firstSquareOfMoveClicked.y * spacing + transform.position.y, 0);
+            selectionDisplay.transform.localPosition = new Vector3(firstSquareOfMoveClicked.boardPosition.x * spacing + transform.position.x,
+                                                                   firstSquareOfMoveClicked.boardPosition.y * spacing + transform.position.y,
+                                                                   0);
         }
+    }
 
+    public void DisplayPuzzle()
+    {
         if (activePuzzle.IsSolved())
         {
             currentSolutionText.text = "Your solution: " + activePuzzle.stepsTaken + " steps.";
@@ -143,6 +151,7 @@ public class PuzzleDisplayer : MonoBehaviour
                     GameObject element = Instantiate(elementPrefab, this.transform);
                     element.transform.localPosition = new Vector3(x * spacing, y * spacing, 0);
                     element.GetComponent<DisplayElement>().Initialize(activePuzzle.squares[position], position);
+                    square.GetComponent<Square>().element = element.GetComponent<DisplayElement>();
                 }
             }
         }
