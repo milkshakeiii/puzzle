@@ -155,6 +155,8 @@ public class PuzzleSolver
             cancellationToken.ThrowIfCancellationRequested();
 
             Puzzle current = frontier.Dequeue();
+            if (iterations % 1000 == 0)
+                Debug.Log(current.stepsTaken + PuzzleSetup.instance.Heuristic(current));
             iterations++;
             if (current.IsSolved())
             {

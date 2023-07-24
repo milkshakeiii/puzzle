@@ -19,7 +19,8 @@ public class PuzzleDisplayer : MonoBehaviour
 
     public float spacing = 2f;
 
-    private Puzzle startingState = null; 
+    private Puzzle startingState = null;
+    private Stack<Puzzle> undoList = new();
     private Puzzle activePuzzle = null;
 
     private Square firstSquareOfMoveClicked = null; // the first square clicked in a move, or null if no square has been clicked yet
@@ -51,6 +52,7 @@ public class PuzzleDisplayer : MonoBehaviour
 
     public void RestartCurrentPuzzle()
     {
+        undoList.Push(activePuzzle.Copy());
         activePuzzle = startingState.Copy();
         ClearPuzzle();
         DisplayPuzzle();
@@ -98,14 +100,32 @@ public class PuzzleDisplayer : MonoBehaviour
         }
         else
         {
+            undoList.Push(activePuzzle.Copy());
             bool goodMove = activePuzzle.MakeMove(firstSquareOfMoveClicked.boardPosition, square.boardPosition);
             if (goodMove && firstSquareOfMoveClicked.element != null)
+            {
                 firstSquareOfMoveClicked.element.AnimateTo(square, activePuzzle);
+            }
+            else
+            {
+                undoList.Pop();
+            }
             firstSquareOfMoveClicked = null;
             ClearPuzzle();
             DisplayPuzzle();
         }
         UpdateSelectionDisplay();
+    }
+
+    public void Undo()
+    {
+        if (undoList.Count == 0)
+        {
+            return;
+        }
+        activePuzzle = undoList.Pop();
+        ClearPuzzle();
+        DisplayPuzzle();
     }
 
     // Update is called once per frame
@@ -115,6 +135,10 @@ public class PuzzleDisplayer : MonoBehaviour
         {
             SetOptimalSolution(optimalSolutionTask.Result);
             optimalSolutionTask = null;
+        }
+        if (Input.GetKeyUp(KeyCode.Backspace))
+        {
+            Undo();
         }
     }
 

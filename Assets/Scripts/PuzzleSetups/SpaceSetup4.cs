@@ -33,7 +33,7 @@ public class SpaceSetup4 : SpaceSetup1
             while (activePuzzle.squares.ContainsKey(randomSquare));
             activePuzzle.AddElement(randomSquare, (int)SpaceSetup1.SpaceElements.Dust);
         }
-        for (int i = 0; i < random.Next(3, 6); i++)
+        for (int i = 0; i < random.Next(2, 6); i++)
         {
             Vector2Int randomSquare;
             do
@@ -43,7 +43,7 @@ public class SpaceSetup4 : SpaceSetup1
             while (activePuzzle.squares.ContainsKey(randomSquare));
             activePuzzle.AddElement(randomSquare, (int)SpaceSetup1.SpaceElements.Time);
         }
-        for (int i = 0; i < random.Next(3, 6); i++)
+        for (int i = 0; i < random.Next(4, 6); i++)
         {
             Vector2Int randomSquare;
             do

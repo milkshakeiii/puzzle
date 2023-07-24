@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/space.unity
     guid: f19a81e7cfe9e3a4eb3cfae0070b2342
+  - enabled: 1
+    path: Assets/Scenes/great_work.unity
+    guid: 2af5cb7f778fd2a409998d1efd97eaeb
   m_configObjects: {}
