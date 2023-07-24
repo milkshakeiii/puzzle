@@ -61,22 +61,53 @@ public class SpaceSetup1 : PuzzleSetup
 
     public override int Heuristic(Puzzle puzzle)
     {
-        int bestTier1 = 3;
-        int bestTier2 = 3;
-        bool hasGalaxy = false;
-        foreach (int element in puzzle.squares.Values)
-        {
-            bestTier1 = Math.Min(bestTier1, track1Tiers.GetValueOrDefault(element, 3));
-            bestTier2 = Math.Min(bestTier2, track2Tiers.GetValueOrDefault(element, 3));
-            hasGalaxy = hasGalaxy || element == (int)SpaceElements.Galaxy;
-        }
-        if (hasGalaxy)
+        HashSet<int> containedElements = new(puzzle.squares.Values);
+        return PairwiseDistances(puzzle, SpaceElements.Galaxy, containedElements);
+    }
+
+    private int PairwiseDistances(Puzzle puzzle, SpaceElements neededElement, HashSet<int> containedElements)
+    {
+        if (containedElements.Contains((int)neededElement))
         {
             return 0;
         }
+        if (!backwardSpaceCombinations.ContainsKey((int)neededElement))
+        {
+            return 10000;
+        }
+        Tuple<int, int> neededComponentElements = backwardSpaceCombinations[(int)neededElement];
+        if (containedElements.Contains(neededComponentElements.Item1) && containedElements.Contains(neededComponentElements.Item2))
+        {
+            List<Vector2Int> item1positions = new();
+            List<Vector2Int> item2positions = new();
+            foreach (KeyValuePair<Vector2Int, int> square in puzzle.squares)
+            {
+                if (square.Value == neededComponentElements.Item1)
+                {
+                    item1positions.Add(square.Key);
+                }
+                else if (square.Value == neededComponentElements.Item2)
+                {
+                    item2positions.Add(square.Key);
+                }
+            }
+            int minDistance = int.MaxValue;
+            foreach (Vector2Int item1position in item1positions)
+            {
+                foreach (Vector2Int item2position in item2positions)
+                {
+                    int distance = Math.Abs(item1position.x - item2position.x) + Math.Abs(item1position.y - item2position.y);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                    }
+                }
+            }
+            return minDistance;
+        }
         else
         {
-            return 1 + bestTier1 + bestTier2;
+            return 1 + PairwiseDistances(puzzle, (SpaceElements)neededComponentElements.Item1, containedElements) + PairwiseDistances(puzzle, (SpaceElements)neededComponentElements.Item2, containedElements);
         }
     }
 
