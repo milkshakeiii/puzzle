@@ -15,7 +15,7 @@ public class ColorChangeForLevel : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().color = color;
         }
-        else if (spaceSetup2 && PuzzleSetup.instance is SpaceSetup2)
+        else if (spaceSetup2 && (PuzzleSetup.instance is SpaceSetup2 || (PuzzleSetup.instance is SpaceSetup4 spaceSetup4 && spaceSetup4.hasBlackholeEffect)))
         {
             GetComponent<SpriteRenderer>().color = color;
         }

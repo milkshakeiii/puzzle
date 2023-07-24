@@ -73,6 +73,10 @@ public class PuzzleDisplayer : MonoBehaviour
     public void SetOptimalSolution(int optimalSolution)
     {
         optimalSolutionText.text = "Optimal solution: " + optimalSolution + " steps.";
+        if (optimalSolution == -1)
+        {
+            optimalSolutionText.text = "Optimal solution: ???";
+        }
         activePuzzle.optimalSolutionSteps = optimalSolution;
     }
 
