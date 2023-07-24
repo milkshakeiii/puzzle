@@ -155,7 +155,6 @@ public class PuzzleSolver
             cancellationToken.ThrowIfCancellationRequested();
 
             Puzzle current = frontier.Dequeue();
-            puzzle.squares = current.squares;
             iterations++;
             if (current.IsSolved())
             {
@@ -168,7 +167,7 @@ public class PuzzleSolver
                     Puzzle copy = current.Copy();
                     if (copy.MakeMove(sourceSquare, targetSquare) && !visited.Contains(copy))
                     {
-                        frontier.Enqueue(copy, copy.stepsTaken + PuzzleSetup.instance.Heuristic(puzzle));
+                        frontier.Enqueue(copy, copy.stepsTaken + PuzzleSetup.instance.Heuristic(copy));
                         visited.Add(copy);
                     }
                 }

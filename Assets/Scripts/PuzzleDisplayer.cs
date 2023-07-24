@@ -100,6 +100,7 @@ public class PuzzleDisplayer : MonoBehaviour
             firstSquareOfMoveClicked = null;
             ClearPuzzle();
             DisplayPuzzle();
+            Debug.Log(activePuzzle.stepsTaken + PuzzleSetup.instance.Heuristic(activePuzzle));
         }
         UpdateSelectionDisplay();
     }

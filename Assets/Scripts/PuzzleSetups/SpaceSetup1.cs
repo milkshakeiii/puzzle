@@ -90,15 +90,8 @@ public class SpaceSetup1 : PuzzleSetup
         activePuzzle.AddElement(new Vector2Int(1, 1), (int)SpaceElements.Time);
         activePuzzle.AddElement(new Vector2Int(1, 2), (int)SpaceElements.Time);
         activePuzzle.AddElement(new Vector2Int(1, 3), (int)SpaceElements.Time);
-        activePuzzle.AddElement(new Vector2Int(1, 4), (int)SpaceElements.Time);
         activePuzzle.AddElement(new Vector2Int(2, 1), (int)SpaceElements.Time);
         activePuzzle.AddElement(new Vector2Int(3, 1), (int)SpaceElements.Time);
-        activePuzzle.AddElement(new Vector2Int(4, 1), (int)SpaceElements.Time);
-        activePuzzle.AddElement(new Vector2Int(4, 2), (int)SpaceElements.Time);
-        activePuzzle.AddElement(new Vector2Int(4, 3), (int)SpaceElements.Time);
-        activePuzzle.AddElement(new Vector2Int(4, 4), (int)SpaceElements.Time);
-        activePuzzle.AddElement(new Vector2Int(3, 4), (int)SpaceElements.Time);
-        activePuzzle.AddElement(new Vector2Int(2, 4), (int)SpaceElements.Time);
         activePuzzle.AddElement(new Vector2Int(0, 1), (int)SpaceElements.Dust);
         activePuzzle.AddElement(new Vector2Int(0, 4), (int)SpaceElements.Dust);
         activePuzzle.AddElement(new Vector2Int(3, 0), (int)SpaceElements.Dust);
@@ -113,6 +106,8 @@ public class SpaceSetup1 : PuzzleSetup
     {
         return elementSprites;
     }
+
+    public static Dictionary<int, Tuple<int, int>> backwardSpaceCombinations = new();
 
     protected override void ProtectedAwake()
     {
@@ -130,6 +125,11 @@ public class SpaceSetup1 : PuzzleSetup
             {(int)SpaceElements.Galaxy, Resources.Load<Sprite>("Sprites/galaxy")},
             {(int)SpaceElements.Eons, Resources.Load<Sprite>("Sprites/eons")},
         };
+
+        foreach(var keyValuePair in spaceCombinations)
+        {
+            backwardSpaceCombinations[keyValuePair.Value] = keyValuePair.Key;
+        }
     }
 
     public override bool IsSolved(Puzzle puzzle)
