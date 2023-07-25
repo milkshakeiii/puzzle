@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Utils;
-using static UnityEditor.FilePathAttribute;
 
 public class GreatWorkSetup1 : PuzzleSetup
 {
