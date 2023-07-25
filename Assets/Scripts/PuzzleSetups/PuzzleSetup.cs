@@ -40,4 +40,9 @@ public abstract class PuzzleSetup : MonoBehaviour
     {
         return 0;
     }
+
+    public virtual bool OptimalUnsolvable()
+    {
+        return false;
+    }
 }

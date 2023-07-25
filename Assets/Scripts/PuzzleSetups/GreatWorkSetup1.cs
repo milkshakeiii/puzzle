@@ -70,7 +70,7 @@ public class GreatWorkSetup1 : PuzzleSetup
         return result;
     }
 
-    private int MinimumSpanningTree(HashSet<Vector2Int> categorySquares)
+    protected int MinimumSpanningTree(HashSet<Vector2Int> categorySquares)
     {
         HashSet<Vector2Int> visited = new();
         HashSet<Vector2Int> unvisited = new(categorySquares);

@@ -144,6 +144,11 @@ public class PuzzleSolver
 {
     public static int OptimalSolutionLength(Puzzle puzzle, System.Threading.CancellationToken cancellationToken)
     {
+        if (PuzzleSetup.instance.OptimalUnsolvable())
+        {
+            return -1;
+        }
+
         // use A* to find the shortest path to the solution (if one exists)
         Utils.PriorityQueue<Puzzle, int> frontier = new();
         frontier.Enqueue(puzzle.Copy(), 0);

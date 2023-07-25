@@ -32,4 +32,14 @@ public class GreatWorkSetup3 : GreatWorkSetup1
     {
         return puzzle.squares.ContainsValue((int)WorkElements.Marvel);
     }
+
+    public override int Heuristic(Puzzle puzzle)
+    {
+        return MinimumSpanningTree(puzzle.squares.Keys.ToHashSet());
+    }
+
+    public override bool OptimalUnsolvable()
+    {
+        return true;
+    }
 }
