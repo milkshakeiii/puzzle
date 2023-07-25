@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Utils;
+using static UnityEditor.FilePathAttribute;
 
 public class GreatWorkSetup1 : PuzzleSetup
 {
@@ -27,55 +29,78 @@ public class GreatWorkSetup1 : PuzzleSetup
 
     public override int Heuristic(Puzzle puzzle)
     {
-        return MinimumSpanningTree(puzzle.squares.Keys.ToHashSet());
+        int result = 0;
+        HashSet<WorkElements> category1 = new()
+        {
+            WorkElements.Need, WorkElements.Purpose,
+        };
+        HashSet<WorkElements> category2 = new()
+        {
+            WorkElements.People, WorkElements.Culture,
+        };
+        HashSet<WorkElements> category3 = new()
+        {
+            WorkElements.Thought, WorkElements.Learning
+        };
+        HashSet<WorkElements> category4 = new()
+        {
+            WorkElements.Matter, WorkElements.Resource
+        };
+        HashSet<WorkElements> category5 = new()
+        {
+            WorkElements.Labor, WorkElements.Location, WorkElements.Material, WorkElements.Design, WorkElements.Won, WorkElements.der, WorkElements.Wonder,
+        };
+        List<HashSet<WorkElements>> categories = new() { category1, category2, category3, category4, category5,};
+        foreach(HashSet<WorkElements> category in categories)
+        {
+            HashSet<Vector2Int> categorySquares = new();
+            foreach(KeyValuePair<Vector2Int, int> square in puzzle.squares)
+            {
+                if (category.Contains((WorkElements)square.Value))
+                {
+                    categorySquares.Add(square.Key);
+                }
+            }
+            if (categorySquares.Count == 0)
+            {
+                continue;
+            }
+            result += MinimumSpanningTree(categorySquares);
+        }
+        return result;
     }
 
-    private int MinimumSpanningTree(HashSet<Vector2Int> points)
+    private int MinimumSpanningTree(HashSet<Vector2Int> categorySquares)
     {
-        // consider points to be the nodes of a complete graph, and the distance between two points to be the cost of the edge between them
-        // find the minimum spanning tree of this graph
-        // return the sum of the costs of the edges in the minimum spanning tree
-        // use Prim's algorithm
-        // start with an arbitrary node
-        // add the lowest-cost edge connected to the node to the tree
-        // repeat until all nodes are in the tree
-        // return the sum of the costs of the edges in the tree
-        if (points.Count == 0)
+        HashSet<Vector2Int> visited = new();
+        HashSet<Vector2Int> unvisited = new(categorySquares);
+        Vector2Int first = unvisited.First();
+        unvisited.Remove(first);
+        visited.Add(first);
+        int result = 0;
+
+        while (unvisited.Count > 0)
         {
-            return 0;
-        }
-        int pointsCount = points.Count;
-        HashSet<Vector2Int> nodesInTree = new() { points.First() };
-        HashSet<(Vector2Int, Vector2Int)> edgesInTree = new();
-        int totalCost = 0;
-        while (nodesInTree.Count < pointsCount)
-        {
-            // find the lowest-cost edge connected to the tree
-            int lowestCost = int.MaxValue;
-            (Vector2Int, Vector2Int) lowestCostEdge = (Vector2Int.zero, Vector2Int.zero);
-            foreach (Vector2Int node in nodesInTree)
+            int minDistance = int.MaxValue;
+            Vector2Int minDistanceSquare = new();
+            foreach (Vector2Int visitedSquare in visited)
             {
-                foreach (Vector2Int point in points)
+                foreach (Vector2Int unvisitedSquare in unvisited)
                 {
-                    if (nodesInTree.Contains(point))
+                    int distance = Math.Abs(visitedSquare.x - unvisitedSquare.x) + Math.Abs(visitedSquare.y - unvisitedSquare.y);
+                    if (distance < minDistance)
                     {
-                        continue;
-                    }
-                    int cost = Math.Abs(node.y - point.y) + Math.Abs(node.x - point.x);
-                    if (cost < lowestCost)
-                    {
-                        lowestCost = cost;
-                        lowestCostEdge = (node, point);
+                        minDistance = distance;
+                        minDistanceSquare = unvisitedSquare;
                     }
                 }
             }
-            // add the lowest-cost edge to the tree
-            nodesInTree.Add(lowestCostEdge.Item2);
-            edgesInTree.Add(lowestCostEdge);
-            points.Remove(lowestCostEdge.Item2);
-            totalCost += lowestCost;
+            result += minDistance;
+            visited.Add(minDistanceSquare);
+            unvisited.Remove(minDistanceSquare);
         }
-        return totalCost;
+
+        return result;
     }
 
     public override Dictionary<Tuple<int, int>, int> GetCombinations()
