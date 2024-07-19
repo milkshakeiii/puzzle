@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using Steamworks;
+using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.Sqlite;
 
 public class SteamScript : MonoBehaviour
 {
@@ -38,5 +40,11 @@ public class SteamScript : MonoBehaviour
         {
             Debug.Log("SteamMAnager.Initialized was false");
         }
+
+        // Use ISteamUser::GetAuthTicketForWebApi
+        // This will return a ticket that can be used to authenticate with a Web API
+        HAuthTicket ticket = Steamworks.SteamUser.GetAuthTicketForWebApi("monstermakers");
+        // the ticket will be returned in callback GetTicketForWebApiResponse_t
+        
     }
 }
